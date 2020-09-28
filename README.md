@@ -1,2 +1,2 @@
 # VUT-IMP
-B - LIBOVOLNÝ KIT: Otáčkoměr
+B - ANY KIT: Tachometer
