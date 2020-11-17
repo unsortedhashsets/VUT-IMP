@@ -2,11 +2,11 @@
 <project outputprefix="tachometr">
 
     <!--  Project description -->
-    <name>Tachometr (Clickometr)</name>
+    <name>Tachometr</name>
     <author>Mikhail Abramov</author>
     <authoremail>xabram00@stud.fit.vutbr.cz</authoremail>
     <revision>20201120</revision>
-    <description>Tachometr (Clickometr)</description>
+    <description>Tachometr</description>
 
     <!--  MCU part -->
     <mcu>

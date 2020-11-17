@@ -1,2 +1,4 @@
 # VUT-IMP
 B - ANY KIT: Tachometer
+
+Create an application that implements a simple tachometer, and you can replace the rotor rotation emulation by manually pressing the selected button on the kit. You can display the speed (presses) per minute on the terminal, on the kit display (if equipped) or on an external monitor. Ensure the natural behavior of the application (ie update the measured speed value with a reasonable frequency so that it is as close as possible to reality in the widest possible speed range, after stopping the rotor, do not forget to detect this situation correctly and reset the tachometer).

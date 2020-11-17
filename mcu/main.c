@@ -1,10 +1,8 @@
 /*
-Autor: Mikhail Abramov
+Author: Mikhail Abramov
 Login: xabram00
-Datum: 20. 11. 2020
+Date: 20. 11. 2020
 */
-
-#include <stdbool.h>
 
 #include <fitkitlib.h>
 #include <keyboard/keyboard.h>
@@ -23,20 +21,50 @@ char RPM3 = 48;
 char RPM4 = 48;
 
 /**
- * Inicializace periferii/komponent po naprogramovani FPGA
+ * Initialization of components after FPGA programming
  */
 void fpga_initialized()
 {
   LCD_clear();
-  LCD_append_string("IMP-Ckick");
+  LCD_append_string("IMP-Tachometer  ");
+  LCD_append_string("...RPM: ");
+  LCD_append_char(RPM1);
+  LCD_append_char(RPM2);
+  LCD_append_char(RPM3);
+  LCD_append_char(RPM4);
+  LCD_append_string(" r/m");
+  term_send_str("IMP-Tachometer program started");
+  term_send_crlf();
+  term_send_str("------------------------------");
+  term_send_crlf();
+  term_send_str("Author: Mikhail Abramov");
+  term_send_crlf();
+  term_send_str("Login: xabram00");
+  term_send_crlf();
+  term_send_str("Date: 20. 11. 2020");
+  term_send_crlf();
+  term_send_str("------------------------------");
+  term_send_crlf();
+  term_send_str("To start measurement press:");
+  term_send_crlf();
+  term_send_str("0,1,2,3,4,5,6,7,8,9,*,#.");
+  term_send_crlf();
+  term_send_str("------------------------------");
+  term_send_crlf();
 }
 
+/**
+ * Response on 'help' command
+ */
 void print_user_help(void)
 {
   term_send_str("Press any key (0-9, *, #) to start measurement");
   term_send_crlf();
 }
 
+/**
+ * Print logs into the terminal window
+ */
 void print_prog_info(void)
 {
   term_send_str("...RPM: ");
@@ -48,17 +76,24 @@ void print_prog_info(void)
   term_send_crlf();
 }
 
+/**
+ * Show logs onto LCD screen window
+ */
 void show_prog_info(void)
 {
   LCD_clear();
+  LCD_append_string("IMP-Tachometer  ");
   LCD_append_string("...RPM: ");
   LCD_append_char(RPM1);
   LCD_append_char(RPM2);
   LCD_append_char(RPM3);
   LCD_append_char(RPM4);
-  LCD_append_string(" c/m");
+  LCD_append_string(" r/m");
 }
 
+/**
+ * Additional function to convert XXXX digit on four single chars
+ */
 void rpm_digits_count(void)
 {
   if (RPM < 10)
@@ -91,13 +126,16 @@ void rpm_digits_count(void)
   }
 }
 
+/**
+ * Command operator
+ */
 unsigned char decode_user_cmd(char *cmd_ucase, char *cmd)
 {
   return CMD_UNKNOWN;
 }
 
 /**
- * Obsluha klavesnice
+ * Keyboard operator
  */
 int keyboard_idle()
 {
@@ -115,6 +153,9 @@ int keyboard_idle()
   return 0;
 }
 
+/**
+ * Timer interrupt handling - timer A0
+ */
 interrupt(TIMERA0_VECTOR) Timer_A(void)
 {
   flip_led_d6();
@@ -127,35 +168,34 @@ interrupt(TIMERA0_VECTOR) Timer_A(void)
   {
     rpm_digits_count();
     print_prog_info();
+    show_prog_info();
     last_RPM = RPM;
   }
-  show_prog_info();
-  CCR0 += 0x8000; // nastav po kolika ticich (16384 = 0x4000, tj. za 1/2 s) ma dojit k dalsimu preruseni
+  CCR0 += 0x8000;
 }
 
-/*******************************************************************************
- * Hlavni funkce
- *******************************************************************************/
+/**
+ * Main function
+ */
 int main(void)
 {
 
   initialize_hardware();
   keyboard_init();
 
-  WDG_stop();
+  WDG_stop();              // stop watch-dog
 
-  CCTL0 = CCIE;            // povol preruseni pro casovac (rezim vystupni komparace)
-  CCR0 = 0x8000;           // nastav po kolika ticich (16384 = 0x4000, tj. za 1/2 s) ma dojit k preruseni
-  TACTL = TASSEL_1 + MC_2; // ACLK (f_tiku = 32768 Hz = 0x8000 Hz), nepretrzity rezim
+  CCTL0 = CCIE;            // enable interrupt for timer
+  CCR0 = 0x8000;           // over 0x8000 - 1 s should be interrupted
+  TACTL = TASSEL_1 + MC_2; // continuous mode
 
-  // Signalaizace stojiciho vytahu
-  set_led_d6(0); // rozsviceni D6
-  set_led_d5(1); // rozsviceni D5
+  set_led_d6(0); // delighting D6
+  set_led_d5(1); //   lighting D5
 
   while (1)
   {
-    delay_ms(10);
-    keyboard_idle(); // obsluha klavesnice
-    terminal_idle(); // obsluha terminalu
+    delay_ms(10);    // oscillation control
+    keyboard_idle(); // keyboard operator
+    terminal_idle(); // terminal operation
   }
 }
