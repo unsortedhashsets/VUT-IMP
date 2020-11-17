@@ -16,7 +16,7 @@ An application implements a simple tachometer, rotor rotation was emulated with 
 Description of control
 ======================
 
-In addition to the standard Fitkit commands, a single "help" command has been added to display usage information. To start the measurement, just needed to start pressing the keys - the supported keys of the fitkit keyboard are: 0,1,2,3,4,5,6,7,8,9, *, #.
+In addition to the standard Fitkit commands, a single "help" command has been added to display usage information. To start the measurement, just needed to start pressing the keys - the supported keys of the fitkit keyboard are: 0,1,2,3,4,5,6,7,8,9,*,#.
 
 Wiring diagrams of external peripherals with the kit
 ====================================================
@@ -31,7 +31,7 @@ No external periphery. No special settings.
 Video link
 ==========
 
-LINKLINKLINK
+LINK
 
 Final summary
 =============
